@@ -130,7 +130,76 @@ function Validator(formSelector, options){
                 } else {
                     formElement.submit();
                 }
+            } else {
+                toasts({
+                    text : 'Thất bại',
+                    type : 'error',
+                    description : 'Vui lòng kiểm tra lại thông tin!',
+                    duration: 5000,
+                });
             }
         };
     }
 }
+
+
+
+function toasts({
+        text = '',
+        type = '',
+        description = '',
+        duration = null,
+    }){
+        const main = document.getElementById('toast');
+        if (main){
+            const add = document.createElement('div');
+            const icons = {
+                success : "fa-solid fa-check",
+                error: "fa-solid fa-xmark",
+            }
+            const delay = (duration/1000);
+            const icon = icons[type];
+            add.style.animation = `fadeInLeft 0.7s ease forwards, fadeOut ${delay}s ease forwards`;
+            add.classList.add('toast',`toast--${type}`);
+            add.innerHTML = `
+                <div class="toast__icon">
+                    <i class="${icon}"></i>
+                </div>
+                <div class="toast__body">
+                    <h3 class="toast__title">${text}</h3>
+                    <p class="toast__msg">${description}</p>
+                </div>
+                <div class="toast__close">
+                    <i class="fa-solid fa-circle-xmark"></i>
+                </div>
+            `
+                main.appendChild(add);
+                const autoClear = setTimeout(function(){
+                    main.removeChild(add);
+                },duration)
+
+                add.onclick = function(e){
+                    if (e.target('.toast__close')){
+                        main.removeChild(add);
+                        clearTimeout(autoClear);
+                    }
+                }
+        }
+    }
+    function suceessclick(){
+        toasts({
+        text : 'Chúc Mừng',
+        type : 'success',
+        description : 'Bạn Đã Đăng Ký Thành Công',
+        duration: 5000,
+    });
+    }
+    function errorclick(){
+        toasts({
+        text : 'Thất Bại',
+        type : 'error',
+        description : 'Đăng Ký Thất Bại',
+        duration : 5000,
+    });
+    }
+
